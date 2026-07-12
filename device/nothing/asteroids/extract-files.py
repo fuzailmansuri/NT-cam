@@ -1,0 +1,139 @@
+#!/usr/bin/env -S PYTHONPATH=../../../tools/extract-utils python3
+#
+# SPDX-FileCopyrightText: 2024-2025 The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
+from extract_utils.fixups_blob import (
+    blob_fixup,
+    blob_fixups_user_type,
+)
+from extract_utils.fixups_lib import (
+    lib_fixup_remove,
+    lib_fixups,
+    lib_fixups_user_type,
+)
+from extract_utils.main import (
+    ExtractUtils,
+    ExtractUtilsModule,
+)
+
+namespace_imports = [
+    'device/nothing/asteroids',
+    'hardware/qcom-caf/common/libqti-perfd-client',
+    'hardware/qcom-caf/sm8650',
+    'hardware/qcom-caf/wlan',
+    'vendor/qcom/opensource/commonsys/display',
+    'vendor/qcom/opensource/commonsys-intf/display',
+    'vendor/qcom/opensource/dataservices',
+]
+
+def lib_fixup_vendor_suffix(lib: str, partition: str, *args, **kwargs):
+    return f'{lib}_{partition}' if partition == 'vendor' else None
+
+lib_fixups: lib_fixups_user_type = {
+    **lib_fixups,
+    (
+        'com.qualcomm.qti.dpm.api@1.0',
+        'libntf',
+        'vendor.qti.ImsRtpService-V1-ndk',
+        'vendor.qti.diaghal@1.0',
+        'vendor.qti.hardware.dpmaidlservice-V1-ndk',
+        'vendor.qti.hardware.qccsyshal@1.0',
+        'vendor.qti.hardware.qccsyshal@1.1',
+        'vendor.qti.hardware.qccsyshal@1.2',
+        'vendor.qti.hardware.wifidisplaysession@1.0',
+        'vendor.qti.imsrtpservice@3.0',
+        'vendor.qti.imsrtpservice@3.1',
+        'vendor.qti.qccvndhal_aidl-V1-ndk',
+    ): lib_fixup_vendor_suffix,
+    (
+        'libar-pal',
+        'libar-acdb',
+        'liblx-osal',
+        'libats',
+        'libagm',
+        'libpalclient',
+    ): lib_fixup_remove,
+}
+
+blob_fixups: blob_fixups_user_type = {
+    'system_ext/lib64/libwfdnative.so': blob_fixup()
+        .add_needed('libinput_shim.so'),
+    'system_ext/lib64/libofflineproc_jni.so': blob_fixup()
+        .add_needed('libcamera_client_shim.so'),
+    'system_ext/lib64/vendor.qti.hardware.qccsyshal@1.2-halimpl.so': blob_fixup()
+        .replace_needed('libprotobuf-cpp-full.so','libprotobuf-cpp-full-21.7.so'), 
+    'vendor/bin/qcc-vendor': blob_fixup()
+        .add_needed('libbinder_shim.so'),
+    'vendor/bin/qms': blob_fixup()
+        .add_needed('libbinder_shim.so'),
+    'vendor/bin/xtra-daemon': blob_fixup()
+        .add_needed('libbinder_shim.so'),
+    'vendor/etc/lvacfs_params/1mic/LVACFS_Configuration.txt': blob_fixup()
+        .patch_file('audio/lvacfs_1mic_config.patch'),
+    'vendor/etc/lvacfs_params/2mic/LVACFS_Configuration.txt': blob_fixup()
+        .patch_file('audio/lvacfs_2mic_config.patch'),
+    'vendor/etc/media_codecs_volcano_v1.xml': blob_fixup()
+        .regex_replace(r'(?s)(<MediaCodecs.*?>)',r'\1\n    <Include href="media_codecs_dolby_audio.xml" />'),
+    'vendor/lib64/libarcsoft_dark_vision_raw.so': blob_fixup()
+        .clear_symbol_version('remote_register_buf')
+        .clear_symbol_version('rpcmem_alloc')
+        .clear_symbol_version('rpcmem_free'),
+    'vendor/lib64/libcne.so': blob_fixup()
+        .add_needed('libbinder_shim.so'),
+    'vendor/lib64/libmorpho_RapidEffect.so': blob_fixup()
+        .clear_symbol_version('AHardwareBuffer_allocate')
+        .clear_symbol_version('AHardwareBuffer_describe')
+        .clear_symbol_version('AHardwareBuffer_lockPlanes')
+        .clear_symbol_version('AHardwareBuffer_release')
+        .clear_symbol_version('AHardwareBuffer_unlock'),
+    'vendor/lib64/libntcamallocator.so': blob_fixup()
+        .add_needed('libui_shim.so'),
+    'vendor/lib64/vendor.noth.hardware.camera-service-impl.so': blob_fixup()
+        .add_needed('libui_shim.so'),
+    'vendor/lib64/libntcamskia.so': blob_fixup()
+        .add_needed('libnativewindow.so'),
+    'vendor/lib64/vendor.libdpmframework.so': blob_fixup()
+        .add_needed('libbinder_shim.so')
+        .add_needed('libhidlbase_shim.so'),
+    'vendor/lib64/libqcc_sdk.so': blob_fixup()
+        .add_needed('libbinder_shim.so'),
+    'vendor/lib64/libqcodec2_core.so': blob_fixup()
+        .add_needed('libcodec2_shim.so'),
+    'vendor/lib64/libwa_sat.so': blob_fixup()
+        .binary_regex_replace(b'/system\x00', b'/vendor\x00'),
+    (
+        'vendor/lib64/libcapiv2uvvendor.so',
+        'vendor/lib64/liblistensoundmodel2vendor.so',
+        'vendor/lib64/libVoiceSdk.so',
+    ): blob_fixup().replace_needed(
+        'libtensorflowlite_c.so',
+        'libtensorflowlite_c_vendor.so',
+    ),
+    (
+		'vendor/bin/poweropt-service',
+		'vendor/lib64/libapengine.so',
+		'vendor/lib64/libgamepoweroptfeature.so',
+		'vendor/lib64/liblearningmodule.so',
+		'vendor/lib64/liboffscreenpoweroptfeature.so',
+		'vendor/lib64/libpowercore.so',
+		'vendor/lib64/libvideooptfeature.so',
+        'vendor/lib64/libdpps.so',
+        'vendor/lib64/libsnapdragoncolor-manager.so',
+    ): blob_fixup()
+        .replace_needed('libtinyxml2.so', 'libtinyxml2-v34.so'),
+}  # fmt: skip
+
+module = ExtractUtilsModule(
+    'asteroids',
+    'nothing',
+    blob_fixups=blob_fixups,
+    lib_fixups=lib_fixups,
+    namespace_imports=namespace_imports,
+    add_firmware_proprietary_file=True,
+)
+
+if __name__ == '__main__':
+    utils = ExtractUtils.device(module)
+    utils.run()
