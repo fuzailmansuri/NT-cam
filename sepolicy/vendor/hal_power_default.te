@@ -1,0 +1,11 @@
+# Allow QTI PowerHAL to read/write CPU frequency scaling sysfs nodes
+# (needed for frequency hint writes and ADPF headroom queries)
+allow hal_power_default sysfs_devices_system_cpu:file { open read write getattr };
+allow hal_power_default sysfs_devices_system_cpu:dir { open read search };
+
+# Allow QTI PowerHAL to query the QTI DisplayConfig service so it can
+# synchronize performance scaling with display refresh-rate transitions.
+# Must go through hal_graphics_composer_client attribute to satisfy the
+# neverallow imposed by hal_attribute_service(hal_graphics_composer,
+# vendor_hal_vnddisplayconfig_service) in hal_graphics_composer_default.te.
+hal_client_domain(hal_power_default, hal_graphics_composer)

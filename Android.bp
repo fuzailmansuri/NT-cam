@@ -1,0 +1,336 @@
+// Nothing Camera (NTCAM) Port for Nothing Phone (Asteroids)
+// SPDX-License-Identifier: Apache-2.0
+
+soong_namespace {
+}
+
+// Camera Client Shim
+cc_library_shared {
+    name: "libcamera_client_shim",
+    srcs: ["shim/camera_client_shim.cpp"],
+    shared_libs: [
+        "libutils",
+        "liblog",
+        "libbinder",
+    ],
+    system_ext_specific: true,
+}
+
+// Prebuilt Libraries & Binaries
+
+cc_prebuilt_library_shared {
+    name: "libarcsoft_hdr_detection",
+    owner: "nothing",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/libarcsoft_hdr_detection.so",
+            ],
+            shared_libs: [
+                "libmpbase",
+                "liblog",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libarcsoft_mf_superresolution",
+    owner: "nothing",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/libarcsoft_mf_superresolution.so",
+            ],
+            shared_libs: [
+                "libmpbase",
+                "liblog",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libcpion",
+    owner: "nothing",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/libcpion.so",
+            ],
+            shared_libs: [
+                "liblog",
+                "libdmabufheap",
+                "libvmmem",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libtrustedapploader",
+    owner: "nothing",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/libtrustedapploader.so",
+            ],
+            shared_libs: [
+                "liblog",
+                "libminkdescriptor",
+                "libminksocket_vendor",
+                "libqcbor",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libofflineproc_jni",
+    owner: "nothing",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/system_ext/lib64/libofflineproc_jni.so",
+            ],
+            shared_libs: [
+                "libcamera_client_shim",
+                "libandroid_runtime",
+                "libutils",
+                "libbinder",
+                "libcutils",
+                "liblog",
+                "libui",
+                "libcamera_client",
+                "libvndksupport",
+                "libnativewindow",
+                "libcamera_metadata",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    system_ext_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "liboemcrypto",
+    owner: "nothing",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/liboemcrypto.so",
+            ],
+            shared_libs: [
+                "libutils",
+                "liblog",
+                "libQSEEComAPI",
+                "libcpion",
+                "libminkdescriptor",
+                "libcutils",
+                "libtrustedapploader",
+                "vendor.qti.hardware.display.config-V7-ndk",
+                "libpower",
+                "libcrypto",
+                "libbinder_ndk",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "vendor.noth.hardware.camera-V1-ndk",
+    owner: "nothing",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/vendor.noth.hardware.camera-V1-ndk.so",
+            ],
+            shared_libs: [
+                "libbinder_ndk",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "vendor.noth.hardware.camera-service-impl",
+    owner: "nothing",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/vendor.noth.hardware.camera-service-impl.so",
+            ],
+            shared_libs: [
+                "libui_shim",
+                "libc++",
+                "libcutils",
+                "liblog",
+                "libsync",
+                "libcamera_metadata",
+                "libutils",
+                "libui",
+                "libbase",
+                "libhidlbase",
+                "libbinder_ndk",
+                "libntcamcore",
+                "libntcamcommonutils",
+                "vendor.noth.hardware.camera-V1-ndk",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_binary {
+    name: "vendor.noth.hardware.camera-service",
+    owner: "nothing",
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/bin/hw/vendor.noth.hardware.camera-service",
+            ],
+            shared_libs: [
+                "libc++",
+                "libcutils",
+                "liblog",
+                "libsync",
+                "libui",
+                "libbase",
+                "libhidlbase",
+                "libbinder_ndk",
+                "vendor.noth.hardware.camera-service-impl",
+                "vendor.noth.hardware.camera-V1-ndk",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    strip: {
+        none: true,
+    },
+    prefer: true,
+    relative_install_path: "hw",
+    soc_specific: true,
+}
+
+prebuilt_etc_xml {
+    name: "vendor.noth.hardware.camera-service.xml",
+    owner: "nothing",
+    src: "proprietary/vendor/etc/vintf/manifest/vendor.noth.hardware.camera-service.xml",
+    filename_from_src: true,
+    sub_dir: "vintf/manifest",
+    soc_specific: true,
+}
+
+// System/Apps prebuilts
+
+android_app_import {
+    name: "NothingProxy",
+    owner: "nothing",
+    apk: "proprietary/system_ext/app/NothingProxy/NothingProxy.apk",
+    certificate: "platform",
+    dex_preopt: {
+        enabled: false,
+    },
+    system_ext_specific: true,
+}
+
+android_app_import {
+    name: "NTCamera",
+    owner: "nothing",
+    apk: "proprietary/system_ext/priv-app/NTCamera/NTCamera.apk",
+    certificate: "platform",
+    dex_preopt: {
+        enabled: false,
+    },
+    privileged: true,
+    system_ext_specific: true,
+}
+
+android_app_import {
+    name: "NothingExperience",
+    owner: "nothing",
+    apk: "proprietary/system_ext/priv-app/NothingExperience/NothingExperience.apk",
+    certificate: "platform",
+    dex_preopt: {
+        enabled: false,
+    },
+    privileged: true,
+    system_ext_specific: true,
+}

@@ -1,0 +1,4 @@
+allow platform_app vendor_sysfs_graphics:file r_file_perms;
+
+# Camera app needs DSP/fastRPC access for ISP compute offload
+allow platform_app adsprpcd_file:dir { search getattr };

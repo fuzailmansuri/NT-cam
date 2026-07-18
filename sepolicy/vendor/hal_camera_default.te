@@ -1,0 +1,12 @@
+allow hal_camera_default vendor_ntf_file:file r_file_perms;
+allow hal_camera_default nt_cam_device:chr_file rw_file_perms;
+
+# Silence debug shell_data_file search denials
+dontaudit hal_camera_default shell_data_file:dir search;
+
+# Allow hal_camera_default to write to /data/misc/cameraserver (labeled as camera_data_file)
+typeattribute hal_camera_default data_between_core_and_vendor_violators;
+allow hal_camera_default camera_data_file:dir rw_dir_perms;
+allow hal_camera_default camera_data_file:file create_file_perms;
+
+hal_client_domain(hal_camera_default, vendor_hal_qspmhal)
