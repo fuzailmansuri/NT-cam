@@ -1,0 +1,63 @@
+# Nothing Camera for Nothing Phone (3a)
+
+Nothing Camera (`com.nothing.camera`) packaged for AOSPA on asteroids, laid out
+as an extract-utils vendor repository. Clone to `vendor/nothing/camera` and
+run `git lfs pull`.
+
+## Integration
+
+```make
+# BoardConfig.mk
+include vendor/nothing/camera/BoardConfigCamera.mk
+
+# device.mk
+$(call inherit-product, vendor/nothing/camera/nothing-camera.mk)
+```
+
+Required in the device tree:
+
+- `vendor/nothing/asteroids` must ship Nothing's
+  `vendor.qti.hardware.camera.postproc@1.0` interface library as
+  `vendor.qti.hardware.camera.postproc@1.0-nothing.so`, with
+  `libntofflinepostproc.so` and `vendor.qti.hardware.camera.postproc@1.0-service-impl.so`
+  relinked to it. Nothing extended `IPostProcSession` with `release()` under the
+  same package version, so the AOSP/QTI interface library breaks the in-HAL
+  post-processing path (`camerapostprocservice`) for every capture.
+- `vendor/lib64/libcameradecision.so` listed for extraction when building from
+  firmware whose `public.libraries.txt` names it.
+
+## Contents
+
+| Path | |
+|---|---|
+| `NTCamera.apk` | stored with Git LFS (`git lfs pull` after cloning). Built from `app/Android.bp` (symlinked APK) so it is dexpreopted like stock. See `patches/NTCamera.md` for its bytecode changes. |
+| `libofflineproc_jni` | NTCamera's JNI for `media.offline` |
+| `offlineproc/` | `libofflineproc_shim`: `IOfflineProcService`/`IOfflineProcClient` (AIDL reconstructed from Nothing's `libcamera_client`, same transaction codes and vtables) plus `OfflineParameters` and `OfflineProcClient` with Nothing's object layout. `ntcam_offlineproc`: lazy `media.offline` service. |
+| `vendor.noth.hardware.camera-service` | Nothing's algorithm HAL (`INtCamService`), run in the stock `vendor_hal_camera_default` domain |
+| `sepolicy/` | Mirrors the stock policy for the above |
+
+### Why `media.offline` exists
+
+The JNI polls `getService("media.offline")` in an endless 500 ms loop until the
+service appears. Nothing OS publishes it from cameraserver and backs it with
+`/vendor/lib64/libofflinepostprocclient.so`, which Phone (3a) firmware does not
+ship, so stock answers `initOffline()` with `-EINVAL` and NTCamera processes in
+the camera HAL. `ntcam_offlineproc` answers the same way, and starts only while
+the camera holds it.
+
+## Updating
+
+```sh
+./extract-files.py <path to Nothing OS dump>   # regenerates makefiles too
+```
+
+Then re-apply `patches/NTCamera.md` to the new APK.
+
+## Credits
+
+- Omkar Chandorkar (Paranoid Android) - repository layout, extract-utils
+  camera module and the libcamera_client shim approach, from
+  [ThankYouMario/proprietary_vendor_nothing_camera@b61fb25c76](https://github.com/ThankYouMario/proprietary_vendor_nothing_camera/commit/b61fb25c762a8101420f243772b089e1b6d6c0aa)
+- Stock Nothing OS firmware (permissions, SELinux policy, binaries used for
+  reverse engineering) from
+  [leddaz-dump-stash/nothing_asteroids_dump@6c10386180](https://github.com/leddaz-dump-stash/nothing_asteroids_dump/tree/6c10386180c83031c983f569c3c956ebfe8a9c27)
