@@ -1,0 +1,12 @@
+# Nothing Camera
+system_ext/priv-app/NTCamera/NTCamera.apk;EXTRACT_ONLY
+system_ext/etc/permissions/privapp-permissions-NTCamera.xml
+system/etc/sysconfig/nothing-hiddenapi-package-allowlist.xml
+system_ext/lib64/libofflineproc_jni.so
+
+# Nothing Camera algorithm service
+vendor/bin/hw/vendor.noth.hardware.camera-service
+vendor/etc/init/vendor.noth.hardware.camera-service.rc
+vendor/etc/vintf/manifest/vendor.noth.hardware.camera-service.xml
+vendor/lib64/vendor.noth.hardware.camera-V1-ndk.so
+vendor/lib64/vendor.noth.hardware.camera-service-impl.so
