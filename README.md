@@ -58,6 +58,14 @@ Then re-apply `patches/NTCamera.md` to the new APK.
 - Omkar Chandorkar (Paranoid Android) - repository layout, extract-utils
   camera module and the libcamera_client shim approach, from
   [ThankYouMario/proprietary_vendor_nothing_camera@b61fb25c76](https://github.com/ThankYouMario/proprietary_vendor_nothing_camera/commit/b61fb25c762a8101420f243772b089e1b6d6c0aa)
+- Aniket (crdroid-asteroids) - working Nothing Camera bring-up on
+  asteroids used as a cross-reference for the post-processing interface
+  relink and provider integration:
+  [819622a22f](https://github.com/crdroid-asteroids/device_nothing_asteroids/commit/819622a22f79933503b60b2fb365e4b9e0173ce4),
+  [1922fc8530](https://github.com/crdroid-asteroids/device_nothing_asteroids/commit/1922fc85301d5b6820aeb2a60c4ab22dc59a2e0b)
+- Fuzail Mansuri - original NT-cam port and the NTCamera bytecode
+  patches,
+  [9982113fcf](https://github.com/fuzailmansuri/NT-cam/commit/9982113fcf4e60ba6d4c7c76e73f1f28ce8b5ac6)
 - Stock Nothing OS firmware (permissions, SELinux policy, binaries used for
   reverse engineering) from
   [leddaz-dump-stash/nothing_asteroids_dump@6c10386180](https://github.com/leddaz-dump-stash/nothing_asteroids_dump/tree/6c10386180c83031c983f569c3c956ebfe8a9c27)
